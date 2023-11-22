@@ -4,10 +4,10 @@
 #include <Adafruit_MLX90614.h>
 #include <TinyGPS++.h>
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();     // Library Temp Sensor.
-SoftwareSerial gpsSerial(2, 3); // RX, TX
+SoftwareSerial gpsSerial(2,3); // RX, TX
 SoftwareSerial mp3(6, 7);                       // Define Rx_pin Tx_pin.
 SoftwareSerial sim800Serial(10, 11); // RX, TX
-const String myphone = "0917565400";// Insert your phone !!!
+const String myphone = "0347969180";// Thay đổi số điện thoại ở đây !!!
 //====================Smoke sensor and Temp sensor====================//
 volatile  int smokeValue;                        // Smoke value.
 volatile  int tempValue;                          // Temp value.
@@ -47,6 +47,8 @@ void loop() {
   int smokeValue, tempValue;
   readSensor(smokeValue, tempValue);
   Serial.println(tempValue);
+  Serial.println(smokeValue);
+  Serial.println("===============");
   while (gpsSerial.available() > 0) {
     if (gps.encode(gpsSerial.read())) {
       // Lấy thông tin vị trí
@@ -64,6 +66,7 @@ void loop() {
   }
   Serial.println(Data_ESP);
   //====================Check the value of the sensor====================//
+  // SET ĐỘ NHẬY CỦA CẢM BIẾN KHÓI VÀ CẢM BIẾN NHIỆT KHÔNG TIẾP XÚC>.
   if (smokeValue > 600 || tempValue > 30) {
     digitalWrite(4, 1);
     delay(1000);
@@ -143,8 +146,12 @@ void sendLocationSMS(float latitude, float longitude) {
   sim800Serial.println("AT+CMGS=\"" + myphone + "\"");// Lệnh gửi tin nhắn đến số điện thoại
   delay(10000);
   sim800Serial.println("GPS Location Canh Bao Chay:");
-  sim800Serial.println("Latitude: " + String(latitude, 6));
-  sim800Serial.println("Longitude: " + String(longitude, 6));
+  //  Thay đổi nội dung tin nhắn SMS 
+  // Nếu muốn để cố định địa chỉ GPS thì đặt thêm //.
+  //sim800Serial.println("Latitude:  " + String(latitude, 6));
+  //sim800Serial.println("Longitude: " + String(longitude, 6));
+  sim800Serial.println("Latitude: 21.xxxx ");
+  sim800Serial.println("Longitude:105.xxxx ");
   sim800Serial.write(26); // Gửi ký tự kết thúc (Ctrl+Z)
   Serial.println("Sent Successfully ...");
   delay(10000);
